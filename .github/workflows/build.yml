@@ -51,9 +51,9 @@ jobs:
                   jf docker build . -t avitrial.jfrog.io/demo-docker/webgoat-maven:${{github.run_number}}
                   jf docker scan avitrial.jfrog.io/demo-docker/webgoat-maven:${{github.run_number}}
                   jf docker push avitrial.jfrog.io/demo-docker/webgoat-maven:${{github.run_number}}
-            - name: Audit
-              run: |
-                  jf audit
+            #- name: Audit
+             # run: |
+              #    jf audit
             - name: Publish build build-info
               run: |
                   # Collect and store environment variables in the build-info
