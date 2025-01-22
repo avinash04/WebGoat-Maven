@@ -48,9 +48,9 @@ jobs:
                   password: ${{secrets.JF_ACCESS_TOKEN}}
             - name: Docker Build 🐳🐸 and scan
               run: |
-                  jf docker build . -t avitrial.jfrog.io/demo-libs-release/webgoat-maven:${{github.run_number}}
-                  jf docker scan avitrial.jfrog.io/demo-libs-release/webgoat-maven:${{github.run_number}}
-                  jf docker push avitrial.jfrog.io/demo-libs-release/webgoat-maven:${{github.run_number}}
+                  jf docker build . -t avitrial.jfrog.io/demo-docker/webgoat-maven:${{github.run_number}}
+                  jf docker scan avitrial.jfrog.io/demo-docker/webgoat-maven:${{github.run_number}}
+                  jf docker push avitrial.jfrog.io/demo-docker/webgoat-maven:${{github.run_number}}
             - name: Audit
               run: |
                   jf audit
