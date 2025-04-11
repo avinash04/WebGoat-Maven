@@ -69,4 +69,4 @@ jobs:
                   # Publish the build-info to Artifactory
                   jf rt bp ${{env.BUILD_NAME}} ${{github.run_number}} --project=${{secrets.PROJECT_KEY}}
                   # Scan the published build-info with Xray
-                  jf bs ${{env.BUILD_NAME}} ${{github.run_number}} bs --fail=false
+                  jf bs ${{env.BUILD_NAME}} ${{github.run_number}} --fail=false --project=${{secrets.PROJECT_KEY}}
