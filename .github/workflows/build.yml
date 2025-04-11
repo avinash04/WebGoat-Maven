@@ -45,7 +45,7 @@ jobs:
             - name: Build Maven Package
               run: |
                   jf mvnc --repo-resolve-releases=avi-mvn-dev-virtual --repo-resolve-snapshots=avi-mvn-dev-virtual --repo-deploy-releases=avi-mvn-dev-virtual --repo-deploy-snapshots=avi-mvn-dev-virtual
-                  jf mvn clean install -f pom.xml -Dmaven.test.skip=true -Dartifactory.publish.artifacts=true --build-name ${{env.BUILD_NAME}} --build-number ${{github.run_number}}
+                  jf mvn clean install -f pom.xml -Dmaven.test.skip=true -Dartifactory.publish.artifacts=true --build-name ${{env.BUILD_NAME}} --build-number ${{github.run_number}} --project=${{secrets.PROJECT_KEY}}
            # - name: Login to JFrog Docker repo
             #  uses: docker/login-action@v3
              # with:
@@ -63,10 +63,10 @@ jobs:
             - name: Publish build build-info
               run: |
                   # Collect and store environment variables in the build-info
-                  jf rt bce ${{env.BUILD_NAME}} ${{github.run_number}}
+                  jf rt bce ${{env.BUILD_NAME}} ${{github.run_number}} --project=${{secrets.PROJECT_KEY}}
                   # Collect and store VCS details in the build-info
-                  jf rt bag ${{env.BUILD_NAME}} ${{github.run_number}}
+                  jf rt bag ${{env.BUILD_NAME}} ${{github.run_number}} --project=${{secrets.PROJECT_KEY}}
                   # Publish the build-info to Artifactory
-                  jf rt bp ${{env.BUILD_NAME}} ${{github.run_number}}
+                  jf rt bp ${{env.BUILD_NAME}} ${{github.run_number}} --project=${{secrets.PROJECT_KEY}}
                   # Scan the published build-info with Xray
                   jf rt bs ${{env.BUILD_NAME}} ${{github.run_number}}
