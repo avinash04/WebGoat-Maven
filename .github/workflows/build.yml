@@ -16,9 +16,9 @@ permissions:
 jobs:
     mvn-build-and-publish:
         runs-on: ubuntu-latest
-        env:
-            BUILD_NAME: 'webgoat-app'
-            JFROG_BUILD_STATUS: PASS
+        #env:
+            #BUILD_NAME: 'webgoat-app'
+            #JFROG_BUILD_STATUS: PASS
         steps:
             - name: Checkout
               uses: actions/checkout@v4
