@@ -21,9 +21,6 @@ jobs:
             DOCKER_REPO: 'avi-docker-virtual'
             IMAGE_NAME: 'webgoat-maven:${{github.run_number}}'
             JFROG_BUILD_STATUS: PASS
-        outputs:
-            image: ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
-            digest: ${{ steps.build.outputs.digest }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -60,15 +57,15 @@ jobs:
                 #  password: ${{secrets.JF_ACCESS_TOKEN}}
             - name: Docker Build 🐳🐸 and scan
               run: |
-                  jf docker build . -t ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
-                  jf docker scan ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
-                  jf docker push ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
+                  jf docker build . -t ${{ secrets.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
+                  jf docker scan ${{ secrets.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
+                  jf docker push ${{ secrets.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
             #- name: Audit
              # run: |
               #    jf audit
             - name: Publish build build-info
               run: |
-                  echo "${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}" > metadata.json
+                  echo "${{ secrets.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}" > metadata.json
                   jf rt bdc ${{ env.DOCKER_REPO }} --image-file metadata.json --build-name ${{env.BUILD_NAME}} --build-number ${{github.run_number}}
                   # Collect and store environment variables in the build-info
                   jf rt bce ${{env.BUILD_NAME}} ${{github.run_number}}
