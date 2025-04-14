@@ -18,7 +18,12 @@ jobs:
         runs-on: ubuntu-latest
         env:
             BUILD_NAME: 'webgoat-app'
+            DOCKER_REPO: 'avi-docker-virtual'
+            IMAGE_NAME: 'webgoat-maven:${{github.run_number}}'
             JFROG_BUILD_STATUS: PASS
+        outputs:
+            image: ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
+            digest: ${{ steps.build.outputs.digest }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -31,8 +36,9 @@ jobs:
             - name: JFrog CLI setup 🐸
               uses: jfrog/setup-jfrog-cli@v4
               env:
-                  JF_URL: ${{ secrets.JF_URL }}
+                  JF_URL: https://${{ secrets.JF_URL }}/
                   #JF_ACCESS_TOKEN: ${{secrets.JF_ACCESS_TOKEN}}
+                  JF_PROJECT: ${{ secrets.PROJECT_KEY }}
                   JF_GIT_TOKEN: ${{ secrets.JF_GIT_TOKEN }}
               with:
                     oidc-provider-name: avi-github
@@ -45,7 +51,7 @@ jobs:
             - name: Build Maven Package
               run: |
                   jf mvnc --repo-resolve-releases=avi-mvn-dev-virtual --repo-resolve-snapshots=avi-mvn-dev-virtual --repo-deploy-releases=avi-mvn-dev-virtual --repo-deploy-snapshots=avi-mvn-dev-virtual
-                  jf mvn clean install -f pom.xml -Dmaven.test.skip=true -Dartifactory.publish.artifacts=true --build-name ${{env.BUILD_NAME}} --build-number ${{github.run_number}} --project=${{secrets.PROJECT_KEY}}
+                  jf mvn clean install -f pom.xml -Dmaven.test.skip=true -Dartifactory.publish.artifacts=true --build-name ${{env.BUILD_NAME}} --build-number ${{github.run_number}}
            # - name: Login to JFrog Docker repo
             #  uses: docker/login-action@v3
              # with:
@@ -54,19 +60,21 @@ jobs:
                 #  password: ${{secrets.JF_ACCESS_TOKEN}}
             - name: Docker Build 🐳🐸 and scan
               run: |
-                  jf docker build . -t soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}}
-                  jf docker scan soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}}
-                  jf docker push soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}}
+                  jf docker build . -t ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
+                  jf docker scan ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
+                  jf docker push ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
             #- name: Audit
              # run: |
               #    jf audit
             - name: Publish build build-info
               run: |
+                  echo "${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}" > metadata.json
+                  jf rt bdc ${{ env.DOCKER_REPO }} --image-file metadata.json --build-name ${{env.BUILD_NAME}} --build-number ${{github.run_number}}
                   # Collect and store environment variables in the build-info
-                  jf rt bce ${{env.BUILD_NAME}} ${{github.run_number}} --project=${{secrets.PROJECT_KEY}}
+                  jf rt bce ${{env.BUILD_NAME}} ${{github.run_number}}
                   # Collect and store VCS details in the build-info
-                  jf rt bag ${{env.BUILD_NAME}} ${{github.run_number}} --project=${{secrets.PROJECT_KEY}}
+                  jf rt bag ${{env.BUILD_NAME}} ${{github.run_number}}
                   # Publish the build-info to Artifactory
-                  jf rt bp ${{env.BUILD_NAME}} ${{github.run_number}} --project=${{secrets.PROJECT_KEY}}
+                  jf rt bp ${{env.BUILD_NAME}} ${{github.run_number}}
                   # Scan the published build-info with Xray
-                  jf bs ${{env.BUILD_NAME}} ${{github.run_number}} --fail=false --project=${{secrets.PROJECT_KEY}}
+                  jf bs ${{env.BUILD_NAME}} ${{github.run_number}} --fail=false
