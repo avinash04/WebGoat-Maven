@@ -31,9 +31,8 @@ jobs:
             - name: JFrog CLI setup 🐸
               uses: jfrog/setup-jfrog-cli@v4
               env:
-                  JF_URL: ${{ secrets.JF_URL }}
-                  #JF_ACCESS_TOKEN: ${{secrets.JF_ACCESS_TOKEN}}
-                  JF_PROJECT: ${{ secrets.PROJECT_KEY }}
+                  JF_URL: https://${{ vars.JF_URL }}/
+                  JF_PROJECT: ${{ vars.JF_PROJECT }}
                   JF_GIT_TOKEN: ${{ secrets.JF_GIT_TOKEN }}
               with:
                     oidc-provider-name: avi-github
@@ -55,9 +54,9 @@ jobs:
                 #  password: ${{secrets.JF_ACCESS_TOKEN}}
             - name: Docker Build 🐳🐸 and scan
               run: |
-                  jf docker build . -t soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}}
-                  jf docker scan soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}}
-                  jf docker push soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}}
+                  jf docker build . -t ${{ vars.JF_URL }}/avi-docker-virtual/webgoat-maven:${{github.run_number}}
+                  jf docker scan ${{ vars.JF_URL }}/avi-docker-virtual/webgoat-maven:${{github.run_number}}
+                  jf docker push ${{ vars.JF_URL }}/avi-docker-virtual/webgoat-maven:${{github.run_number}}
             #- name: Audit
              # run: |
               #    jf audit
