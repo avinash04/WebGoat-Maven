@@ -18,8 +18,6 @@ jobs:
         runs-on: ubuntu-latest
         env:
             BUILD_NAME: 'webgoat-app'
-            DOCKER_REPO: 'avi-docker-virtual'
-            IMAGE_NAME: 'webgoat-maven:${{github.run_number}}'
             JFROG_BUILD_STATUS: PASS
         steps:
             - name: Checkout
@@ -33,7 +31,7 @@ jobs:
             - name: JFrog CLI setup 🐸
               uses: jfrog/setup-jfrog-cli@v4
               env:
-                  JF_URL: https://${{ secrets.JF_URL }}/
+                  JF_URL: ${{ secrets.JF_URL }}
                   #JF_ACCESS_TOKEN: ${{secrets.JF_ACCESS_TOKEN}}
                   JF_PROJECT: ${{ secrets.PROJECT_KEY }}
                   JF_GIT_TOKEN: ${{ secrets.JF_GIT_TOKEN }}
@@ -57,16 +55,15 @@ jobs:
                 #  password: ${{secrets.JF_ACCESS_TOKEN}}
             - name: Docker Build 🐳🐸 and scan
               run: |
-                  jf docker build . -t ${{ secrets.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
-                  jf docker scan ${{ secrets.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
-                  jf docker push ${{ secrets.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
+                  jf docker build . -t soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}}
+                  jf docker scan soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}}
+                  jf docker push soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}}
             #- name: Audit
              # run: |
               #    jf audit
             - name: Publish build build-info
               run: |
-                  echo "${{ secrets.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}" > metadata.json
-                  jf rt bdc ${{ env.DOCKER_REPO }} --image-file metadata.json --build-name ${{env.BUILD_NAME}} --build-number ${{github.run_number}}
+                  jf rt bdc ${{ env.DOCKER_REPO }} --image-file soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}} --build-name ${{env.BUILD_NAME}} --build-number ${{github.run_number}}
                   # Collect and store environment variables in the build-info
                   jf rt bce ${{env.BUILD_NAME}} ${{github.run_number}}
                   # Collect and store VCS details in the build-info
