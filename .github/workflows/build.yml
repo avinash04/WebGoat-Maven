@@ -63,7 +63,6 @@ jobs:
               #    jf audit
             - name: Publish build build-info
               run: |
-                  jf rt bdc avi-docker-virtual --image-file soleng.jfrog.io/avi-docker-virtual/webgoat-maven:${{github.run_number}} --build-name ${{env.BUILD_NAME}} --build-number ${{github.run_number}}
                   # Collect and store environment variables in the build-info
                   jf rt bce ${{env.BUILD_NAME}} ${{github.run_number}}
                   # Collect and store VCS details in the build-info
