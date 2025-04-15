@@ -1,4 +1,4 @@
-name: "WebGoat-Maven"
+name: "WebGoat-App"
 on:
     push:
         branches:
@@ -17,7 +17,7 @@ jobs:
     mvn-build-and-publish:
         runs-on: ubuntu-latest
         env:
-            BUILD_NAME: 'webgoat-app'
+            #BUILD_NAME: 'WebGoat-App'
             JFROG_BUILD_STATUS: PASS
         steps:
             - name: Checkout
@@ -46,7 +46,7 @@ jobs:
             - name: Build Maven Package
               run: |
                   jf mvnc --repo-resolve-releases=avi-mvn-dev-virtual --repo-resolve-snapshots=avi-mvn-dev-virtual --repo-deploy-releases=avi-mvn-dev-virtual --repo-deploy-snapshots=avi-mvn-dev-virtual
-                  jf mvn clean install -f pom.xml -Dmaven.test.skip=true -Dartifactory.publish.artifacts=true --build-name ${{env.BUILD_NAME}} --build-number ${{github.run_number}}
+                  jf mvn clean install -f pom.xml -Dmaven.test.skip=true -Dartifactory.publish.artifacts=true
            # - name: Login to JFrog Docker repo
             #  uses: docker/login-action@v3
              # with:
@@ -64,10 +64,10 @@ jobs:
             - name: Publish build build-info
               run: |
                   # Collect and store environment variables in the build-info
-                  jf rt bce ${{env.BUILD_NAME}} ${{github.run_number}}
+                  jf rt bce
                   # Collect and store VCS details in the build-info
-                  jf rt bag ${{env.BUILD_NAME}} ${{github.run_number}}
+                  jf rt bag
                   # Publish the build-info to Artifactory
-                  jf rt bp ${{env.BUILD_NAME}} ${{github.run_number}}
+                  jf rt bp
                   # Scan the published build-info with Xray
-                  jf bs ${{env.BUILD_NAME}} ${{github.run_number}} --fail=false
+                  jf bs --fail=false
