@@ -17,7 +17,8 @@ jobs:
     mvn-build-and-publish:
         runs-on: ubuntu-latest
         env:
-            #BUILD_NAME: 'WebGoat-App'
+            DOCKER_REPO: 'avi-docker-virtual'
+            IMAGE_NAME: 'avi-docker-virtual'
             JFROG_BUILD_STATUS: PASS
         steps:
             - name: Checkout
@@ -54,9 +55,9 @@ jobs:
                 #  password: ${{secrets.JF_ACCESS_TOKEN}}
             - name: Docker Build 🐳🐸 and scan
               run: |
-                  jf docker build . -t ${{ vars.JF_URL }}/avi-docker-virtual/webgoat-maven:${{github.run_number}}
-                  jf docker scan ${{ vars.JF_URL }}/avi-docker-virtual/webgoat-maven:${{github.run_number}}
-                  jf docker push ${{ vars.JF_URL }}/avi-docker-virtual/webgoat-maven:${{github.run_number}}
+                  jf docker build . -t ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}:${{github.run_number}}
+                  jf docker scan ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}:${{github.run_number}}
+                  jf docker push ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}:${{github.run_number}}
             #- name: Audit
              # run: |
               #    jf audit
