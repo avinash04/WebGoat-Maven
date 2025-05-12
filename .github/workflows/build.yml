@@ -69,5 +69,6 @@ jobs:
                   jf rt bag
                   # Publish the build-info to Artifactory
                   jf rt bp
+                  sleep 60s
                   # Scan the published build-info with Xray
                   jf bs --fail=false
