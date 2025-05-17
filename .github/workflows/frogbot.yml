@@ -151,3 +151,6 @@ jobs:
         # Insert to oidc-provider-name the 'Provider Name' defined in the OIDC integration configured in the JPD
         #with:
             #oidc-provider-name: frogbot-integration
+      - name: Set Maven Config
+        run : |
+            jf mvnc --repo-resolve-releases=avi-mvn-dev-virtual --repo-resolve-snapshots=avi-mvn-dev-virtual --repo-deploy-releases=avi-mvn-dev-virtual --repo-deploy-snapshots=avi-mvn-dev-virtual
