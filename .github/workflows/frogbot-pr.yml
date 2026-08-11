@@ -5,6 +5,7 @@ on:
 permissions:
   pull-requests: write
   contents: read
+  id-token: write
   security-events: write
 jobs:
   scan-pull-request:
