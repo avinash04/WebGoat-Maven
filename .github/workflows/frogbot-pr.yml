@@ -9,6 +9,7 @@ permissions:
 jobs:
   scan-pull-request:
     runs-on: ubuntu-latest
+    environment: frogbot
     strategy:
       matrix:
         # The repository scanning will be triggered periodically on the following branches.
