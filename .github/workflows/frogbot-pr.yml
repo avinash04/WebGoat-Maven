@@ -9,19 +9,23 @@ permissions:
 jobs:
   scan-pull-request:
     runs-on: ubuntu-latest
+    environment: frogbot
     strategy:
       matrix:
         # The repository scanning will be triggered periodically on the following branches.
         branch: ["main"]
     steps:
-      - uses: jfrog/frogbot@v2
+      - uses: actions/checkout@v4
         with:
-            oidc-provider-name: avi-github
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: jfrog/frogbot@v3
         env:
           # [Mandatory]
           # JFrog platform URL
           JF_URL: ${{ secrets.JF_URL }}
           JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+            oidc-provider-name: avi-github
 
           # [Mandatory if JF_USER and JF_PASSWORD are not provided]
           # JFrog access token with 'read' permissions on Xray service
