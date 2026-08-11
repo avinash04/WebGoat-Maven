@@ -10,11 +10,10 @@ jobs:
   scan-pull-request:
     runs-on: ubuntu-latest
     environment: frogbot
-    strategy:
-      matrix:
-        # The repository scanning will be triggered periodically on the following branches.
-        branch: ["main"]
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: jfrog/frogbot@v3
         env:
           # [Mandatory]
