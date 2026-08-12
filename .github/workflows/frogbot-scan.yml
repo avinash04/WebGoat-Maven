@@ -27,7 +27,7 @@ jobs:
           ref: ${{ matrix.branch }}
       - uses: jfrog/frogbot@v3
         with:
-            oidc-provider-name: avi-github
+            oidc-provider-name: avinash04/WebGoat-Maven@github
         env:
           # [Mandatory]
           # JFrog platform URL
