@@ -36,7 +36,7 @@ jobs:
                   JF_PROJECT: ${{ vars.JF_PROJECT }}
                   JF_GIT_TOKEN: ${{ secrets.JF_GIT_TOKEN }}
               with:
-                    oidc-provider-name: avi-github
+                    oidc-provider-name: avinash04/WebGoat-Maven@github
                     version: latest
             - name: Health check JFrog Artifactory instance 🐸
               run: |
